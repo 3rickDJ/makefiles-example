@@ -1,22 +1,25 @@
-OBJS := main.o
-BINARY = main.exe
+CC =g++
+CFLAGS =-g -Wall
+SRC=src
+OBJ=obj
+SRCS=$(wildcard $(SRC)/*.cpp)
+OBJS=$(patsubst $(SRC)/%.cpp, $(OBJ)/%.o, $(SRCS))
+
+BINDIR=bin
+BIN = $(BINDIR)/main
 LIBS =-lGL -lglut -lGLU
-FLAGS = -Wall
-CXX = g++
 
-all: app
+all:$(BIN)
 
-%.o: %.cpp %.h
-	$(CXX) $(FLAGS) -c $^
+release: CFLAGS=-Wall -DNDEBUG
+release: clean
+release: $(BIN)
 
-app: main.cpp
-	$(CXX) $(FLAGS) -o $@ $^ $(LIBS)
+$(BIN): $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) $(LIBS) -o $(BIN)
 
-# main: $(OBJS)
-# 	$(CXX) -o $(BINARY) $(FLAGS) $? $(LIBS)
-
-# %.o: %.cpp
-# 	$(CXX) -c $? $(FLAGS) $(LIBS)
+$(OBJ)/%.o: $(SRC)/%.cpp
+	$(CC) $(CFLAGS) $(LIBS) -c $< -o $@
 
 clean:
-	@-rm -rf *.o main.exe
+	-rm -r $(BINDIR)/* $(OBJ)/*
